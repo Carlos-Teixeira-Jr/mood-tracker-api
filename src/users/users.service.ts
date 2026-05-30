@@ -25,7 +25,7 @@ export class UsersService {
   async create(data: CreateUserDto) {
     return this.prisma.user.create({
       data: {
-        name: data.name,
+        name: data.name || 'Anonymous',
         email: data.email,
         passwordHash: data.passwordHash,
       },
