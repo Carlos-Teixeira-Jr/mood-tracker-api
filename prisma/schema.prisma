@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+
+  name         String
+  email        String   @unique
+
+  passwordHash String
+
+  isActive     Boolean  @default(true)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  moods        MoodEntry[]
+  sleeps       SleepEntry[]
+  medications  Medication[]
+  routines     RoutineItem[]
+}
+
+model MoodEntry {
+  id String @id @default(uuid())
+
+  userId String
+
+  score        Int
+  anxiety      Int?
+  energy       Int?
+  irritability Int?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+model SleepEntry {
+  id String @id @default(uuid())
+
+  userId String
+
+  sleptAt DateTime
+  wokeAt  DateTime
+
+  hours Float
+
+  quality Int?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+model Medication {
+  id String @id @default(uuid())
+
+  userId String
+
+  name   String
+  dosage String?
+
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  schedules MedicationSchedule[]
+  logs      MedicationLog[]
+}
+
+model MedicationSchedule {
+  id String @id @default(uuid())
+
+  medicationId String
+
+  time String
+
+  medication Medication @relation(fields: [medicationId], references: [id])
+}
+
+model MedicationLog {
+  id String @id @default(uuid())
+
+  medicationId String
+
+  takenAt DateTime @default(now())
+
+  medication Medication @relation(fields: [medicationId], references: [id])
+}
+
+model RoutineLog {
+  id String @id @default(uuid())
+
+  routineId String
+
+  completedAt DateTime @default(now())
+
+  routine RoutineItem @relation(fields: [routineId], references: [id])
+}
+
+model RoutineItem {
+  id String @id @default(uuid())
+
+  userId String
+
+  title String
+
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  logs RoutineLog[]
+}
