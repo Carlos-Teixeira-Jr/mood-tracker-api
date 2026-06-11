@@ -9,8 +9,14 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async me(@Request() req) {
+    console.log(req.headers);
     const userId = req.user.userId;
 
     return this.usersService.findById(userId);
+  }
+
+  @Get('test')
+  test() {
+    return 'ok';
   }
 }
