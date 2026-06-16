@@ -31,6 +31,8 @@ model MoodEntry {
 
   userId String
 
+  date DateTime
+
   score        Int
   anxiety      Int?
   energy       Int?
@@ -42,7 +44,7 @@ model MoodEntry {
 
   user User @relation(fields: [userId], references: [id])
 
-  @@index([userId, createdAt])
+  @@index([userId, date])
 }
 
 model SleepEntry {
