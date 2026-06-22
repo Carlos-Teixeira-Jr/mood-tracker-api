@@ -58,4 +58,36 @@ export class MoodService {
       where: { id },
     });
   }
+
+  async findToday(userId: string) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return this.prisma.moodEntry.findFirst({
+      where: {
+        userId,
+        date: {
+          gte: today,
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+  }
+
+  async findRecent(userId: string) {
+    return this.prisma.moodEntry.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+      take: 5,
+    });
+  }
+
+  async findHistory(userId: string) {
+    return this.prisma.moodEntry.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+    });
+  }
 }
