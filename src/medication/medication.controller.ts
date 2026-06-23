@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { MedicationService } from './medication.service';
 
@@ -24,5 +33,19 @@ export class MedicationController {
     const userId = req.user.userId;
 
     return this.medicationService.create(userId, req.body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/all')
+  async getAll(@Request() req) {
+    return this.medicationService.findByUser(req.user.userId);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  async update(@Request() req, @Param('id') id: string, @Body() body: any) {
+    const userId = req.user.userId;
+
+    return this.medicationService.update(userId, id, body);
   }
 }

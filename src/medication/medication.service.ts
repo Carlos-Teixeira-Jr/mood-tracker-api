@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMedicationDto } from './dto/create-medication.dto';
 import { UpdateMedicationDto } from './dto/update-medication.dto';
@@ -43,10 +43,27 @@ export class MedicationService {
     });
   }
 
-  async update(id: string, dto: UpdateMedicationDto) {
+  async update(userId: string, id: string, body: any) {
+    const medication = await this.prisma.medication.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!medication) {
+      throw new NotFoundException('Medicação não encontrada.');
+    }
+
     return this.prisma.medication.update({
-      where: { id },
-      data: dto,
+      where: {
+        id,
+      },
+      data: {
+        ...(body.name !== undefined ? { name: body.name } : {}),
+        ...(body.dosage !== undefined ? { dosage: body.dosage || null } : {}),
+        ...(body.active !== undefined ? { active: body.active } : {}),
+      },
     });
   }
 

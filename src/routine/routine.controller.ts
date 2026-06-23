@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Put,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -27,6 +29,14 @@ export class RoutineController {
     const userId = req.user.userId;
 
     return this.routineService.getUserRoutines(userId);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  async update(@Request() req, @Param('id') id: string, @Body() body: any) {
+    const userId = req.user.userId;
+
+    return this.routineService.update(userId, id, body);
   }
 }
 

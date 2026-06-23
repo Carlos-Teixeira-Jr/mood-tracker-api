@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -33,6 +33,29 @@ export class RoutineService {
     return {
       routines,
     };
+  }
+
+  async update(userId: string, id: string, body: any) {
+    const routine = await this.prisma.routineItem.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!routine) {
+      throw new NotFoundException('Item de rotina não encontrado.');
+    }
+
+    return this.prisma.routineItem.update({
+      where: {
+        id,
+      },
+      data: {
+        ...(body.title !== undefined ? { title: body.title } : {}),
+        ...(body.active !== undefined ? { active: body.active } : {}),
+      },
+    });
   }
 }
 
