@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMedicationDto } from './dto/create-medication.dto';
-import { UpdateMedicationDto } from './dto/update-medication.dto';
 
 @Injectable()
 export class MedicationService {
@@ -15,8 +14,11 @@ export class MedicationService {
 
   async findByUser(userId: string) {
     return this.prisma.medication.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        userId,
+        active: true,
+        deletedAt: null,
+      },
     });
   }
 
@@ -67,16 +69,29 @@ export class MedicationService {
     });
   }
 
-  async remove(id: string) {
-    return this.prisma.medication.delete({
-      where: { id },
+  async getUserMedications(userId: string) {
+    return this.prisma.medication.findMany({
+      where: {
+        userId,
+        active: true,
+        deletedAt: null,
+      },
+      include: {
+        schedules: true,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
   }
 
-  async getUserMedications(userId: string) {
-    return this.prisma.medication.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
+  async remove(id: string) {
+    return this.prisma.medication.update({
+      where: { id },
+      data: {
+        active: false,
+        deletedAt: new Date(),
+      },
     });
   }
 }

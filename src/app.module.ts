@@ -10,6 +10,7 @@ import { MedicationModule } from './medication/medication.module';
 import { RoutineModule } from './routine/routine.module';
 import { CheckinModule } from './checkin/chekin.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     RoutineModule,
     CheckinModule,
     DashboardModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -15,6 +15,7 @@ model User {
   passwordHash String
 
   isActive     Boolean  @default(true)
+  deletedAt    DateTime?
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -31,6 +32,8 @@ model Checkin {
   userId String
   date   DateTime
 
+  deletedAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -43,6 +46,42 @@ model Checkin {
 
   @@unique([userId, date], name: "userId_date")
   @@index([userId, date])
+}
+
+model Medication {
+  id String @id @default(uuid())
+
+  userId String
+
+  name   String
+  dosage String?
+
+  active    Boolean @default(true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  schedules MedicationSchedule[]
+  logs      MedicationLog[]
+}
+
+model RoutineItem {
+  id String @id @default(uuid())
+
+  userId String
+
+  title String
+
+  active    Boolean @default(true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  logs RoutineLog[]
 }
 
 model MoodEntry {
@@ -74,24 +113,6 @@ model SleepEntry {
   createdAt DateTime @default(now())
 
   checkin Checkin @relation(fields: [checkinId], references: [id], onDelete: Cascade)
-}
-
-model Medication {
-  id String @id @default(uuid())
-
-  userId String
-
-  name   String
-  dosage String?
-
-  active Boolean @default(true)
-
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-
-  schedules MedicationSchedule[]
-  logs      MedicationLog[]
 }
 
 model MedicationSchedule {
@@ -130,20 +151,4 @@ model RoutineLog {
   routine RoutineItem @relation(fields: [routineId], references: [id])
 
   @@unique([checkinId, routineId])
-}
-
-model RoutineItem {
-  id String @id @default(uuid())
-
-  userId String
-
-  title String
-
-  active Boolean @default(true)
-
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-
-  logs RoutineLog[]
 }

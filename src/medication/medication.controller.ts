@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -47,5 +48,11 @@ export class MedicationController {
     const userId = req.user.userId;
 
     return this.medicationService.update(userId, id, body);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async remove(@Param('id') id: string) {
+    return this.medicationService.remove(id);
   }
 }

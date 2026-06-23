@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -37,6 +38,12 @@ export class RoutineController {
     const userId = req.user.userId;
 
     return this.routineService.update(userId, id, body);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async remove(@Param('id') id: string) {
+    return this.routineService.remove(id);
   }
 }
 

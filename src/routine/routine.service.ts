@@ -57,6 +57,16 @@ export class RoutineService {
       },
     });
   }
+
+  async remove(id: string) {
+    return this.prisma.routineItem.update({
+      where: { id },
+      data: {
+        active: false,
+        deletedAt: new Date(),
+      },
+    });
+  }
 }
 
 export default RoutineService;

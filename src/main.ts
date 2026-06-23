@@ -6,15 +6,19 @@ async function bootstrap() {
 
   const isDev = process.env.ENVIRONMENT === 'dev';
 
-  const clientUrl = isDev
-    ? process.env.DEV_CLIENT_URL
-    : process.env.PROD_CLIENT_URL;
+  if (isDev) {
+    app.enableCors({
+      origin: true,
+      credentials: true,
+    });
+  } else {
+    app.enableCors({
+      origin: process.env.PROD_CLIENT_URL,
+      credentials: true,
+    });
+  }
 
-  app.enableCors({
-    origin: clientUrl,
-    credentials: true,
-  });
-
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
+
 bootstrap();
