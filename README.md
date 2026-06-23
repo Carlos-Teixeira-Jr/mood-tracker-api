@@ -301,25 +301,16 @@ User
 
 ---
 
-## Testes
+## Desenvolvido por
 
-Executar testes unitários:
+**Carlos Teixeira**
 
-```bash
-npm run test
-```
+Desenvolvedor Full Stack especializado em aplicações modernas utilizando Vue.js, NestJS, TypeScript e PostgreSQL.
 
-Executar testes e2e:
+### Contato
 
-```bash
-npm run test:e2e
-```
-
-Gerar relatório de cobertura:
-
-```bash
-npm run test:cov
-```
+- Portfolio: https://seu-portfolio.com
+- E-mail: teixeirahist1988@gmail.com
 
 ---
 
