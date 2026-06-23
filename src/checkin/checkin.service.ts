@@ -10,8 +10,15 @@ class CheckinService {
 
     const checkinDate = new Date(`${date}T12:00:00.000Z`);
 
-    return this.prisma.checkin.create({
-      data: {
+    return this.prisma.checkin.upsert({
+      where: {
+        userId_date: {
+          userId,
+          date: checkinDate,
+        },
+      },
+
+      create: {
         userId,
         date: checkinDate,
 
@@ -29,17 +36,7 @@ class CheckinService {
           ? {
               sleep: {
                 create: {
-                  sleptAt: this.combineDateAndTime(date, sleep.sleptAt),
-                  wokeAt: this.resolveWakeTime(
-                    date,
-                    sleep.sleptAt,
-                    sleep.wokeAt,
-                  ),
-                  hours: this.calculateSleepHours(
-                    date,
-                    sleep.sleptAt,
-                    sleep.wokeAt,
-                  ),
+                  hours: Number(sleep.hours),
                   quality: sleep.quality || null,
                   notes: sleep.notes || null,
                 },
@@ -63,6 +60,65 @@ class CheckinService {
           })),
         },
       },
+
+      update: {
+        mood: {
+          upsert: {
+            create: {
+              score: mood.score,
+              anxiety: mood.anxiety,
+              energy: mood.energy,
+              irritability: mood.irritability,
+              notes: mood.notes || null,
+            },
+            update: {
+              score: mood.score,
+              anxiety: mood.anxiety,
+              energy: mood.energy,
+              irritability: mood.irritability,
+              notes: mood.notes || null,
+            },
+          },
+        },
+
+        ...(sleep
+          ? {
+              sleep: {
+                upsert: {
+                  create: {
+                    hours: Number(sleep.hours),
+                    quality: sleep.quality || null,
+                    notes: sleep.notes || null,
+                  },
+                  update: {
+                    hours: Number(sleep.hours),
+                    quality: sleep.quality || null,
+                    notes: sleep.notes || null,
+                  },
+                },
+              },
+            }
+          : {}),
+
+        medicationLogs: {
+          deleteMany: {},
+          create: medications.map((item) => ({
+            medicationId: item.medicationId,
+            takenAt: item.takenAt ? new Date(item.takenAt) : checkinDate,
+          })),
+        },
+
+        routineLogs: {
+          deleteMany: {},
+          create: routines.map((item) => ({
+            routineId: item.routineId,
+            completedAt: item.completedAt
+              ? new Date(item.completedAt)
+              : checkinDate,
+          })),
+        },
+      },
+
       include: {
         mood: true,
         sleep: true,
@@ -70,28 +126,6 @@ class CheckinService {
         routineLogs: true,
       },
     });
-  }
-
-  private combineDateAndTime(date: string, time: string) {
-    return new Date(`${date}T${time}:00.000`);
-  }
-
-  private resolveWakeTime(date: string, sleptAt: string, wokeAt: string) {
-    const sleptDate = this.combineDateAndTime(date, sleptAt);
-    const wokeDate = this.combineDateAndTime(date, wokeAt);
-
-    if (wokeDate <= sleptDate) {
-      wokeDate.setDate(wokeDate.getDate() + 1);
-    }
-
-    return wokeDate;
-  }
-
-  private calculateSleepHours(date: string, sleptAt: string, wokeAt: string) {
-    const sleptDate = this.combineDateAndTime(date, sleptAt);
-    const wokeDate = this.resolveWakeTime(date, sleptAt, wokeAt);
-
-    return (wokeDate.getTime() - sleptDate.getTime()) / 1000 / 60 / 60;
   }
 }
 

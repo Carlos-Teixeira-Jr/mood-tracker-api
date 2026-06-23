@@ -9,6 +9,7 @@ import { MoodModule } from './mood/mood.module';
 import { MedicationModule } from './medication/medication.module';
 import { RoutineModule } from './routine/routine.module';
 import { CheckinModule } from './checkin/chekin.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CheckinModule } from './checkin/chekin.module';
     MedicationModule,
     RoutineModule,
     CheckinModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

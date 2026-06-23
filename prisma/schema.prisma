@@ -36,12 +36,12 @@ model Checkin {
 
   user User @relation(fields: [userId], references: [id])
 
-  mood          MoodEntry?
-  sleep         SleepEntry?
+  mood           MoodEntry?
+  sleep          SleepEntry?
   medicationLogs MedicationLog[]
   routineLogs    RoutineLog[]
 
-  @@unique([userId, date])
+  @@unique([userId, date], name: "userId_date")
   @@index([userId, date])
 }
 
@@ -66,9 +66,6 @@ model SleepEntry {
   id String @id @default(uuid())
 
   checkinId String @unique
-
-  sleptAt DateTime
-  wokeAt  DateTime
 
   hours Float
   quality Int?
