@@ -1,4 +1,3 @@
-````md
 # Mood Tracker API
 
 Backend da aplicação Mood Tracker, responsável pelo gerenciamento de usuários, autenticação, check-ins diários, humor, sono, medicações, rotinas e métricas para dashboard.
@@ -83,12 +82,31 @@ Inclui:
 
 ---
 
+## Estrutura do Projeto
+
+```
+
+src
+│
+├── auth
+├── checkin
+├── dashboard
+├── medication
+├── routine
+├── prisma
+│
+├── app.module.ts
+└── main.ts
+
+```
+
+---
+
 ## Instalação
 
 ```bash
 npm install
 ```
-````
 
 ## Variáveis de Ambiente
 
@@ -264,6 +282,25 @@ all
 
 ---
 
+## Modelo de Dados
+
+```
+
+User
+│
+├── Checkins
+│ ├── MoodEntry
+│ ├── SleepEntry
+│ ├── MedicationLogs
+│ └── RoutineLogs
+│
+├── Medications
+└── RoutineItems
+
+```
+
+---
+
 ## Testes
 
 Executar testes unitários:
@@ -289,7 +326,3 @@ npm run test:cov
 ## Licença
 
 MIT
-
-```
-
-```
