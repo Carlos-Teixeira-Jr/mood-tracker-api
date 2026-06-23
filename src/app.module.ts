@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { MoodModule } from './mood/mood.module';
 import { MedicationModule } from './medication/medication.module';
 import { RoutineModule } from './routine/routine.module';
+import { CheckinModule } from './checkin/chekin.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RoutineModule } from './routine/routine.module';
     MoodModule,
     MedicationModule,
     RoutineModule,
+    CheckinModule,
   ],
   controllers: [AppController],
   providers: [AppService],

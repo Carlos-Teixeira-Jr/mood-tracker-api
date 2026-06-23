@@ -12,7 +12,6 @@ model User {
 
   name         String
   email        String   @unique
-
   passwordHash String
 
   isActive     Boolean  @default(true)
@@ -20,18 +19,36 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  moods        MoodEntry[]
-  sleeps       SleepEntry[]
+  checkins     Checkin[]
+
   medications  Medication[]
   routines     RoutineItem[]
+}
+
+model Checkin {
+  id String @id @default(uuid())
+
+  userId String
+  date   DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  mood          MoodEntry?
+  sleep         SleepEntry?
+  medicationLogs MedicationLog[]
+  routineLogs    RoutineLog[]
+
+  @@unique([userId, date])
+  @@index([userId, date])
 }
 
 model MoodEntry {
   id String @id @default(uuid())
 
-  userId String
-
-  date DateTime
+  checkinId String @unique
 
   score        Int
   anxiety      Int?
@@ -42,30 +59,24 @@ model MoodEntry {
 
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
-
-  @@index([userId, date])
+  checkin Checkin @relation(fields: [checkinId], references: [id], onDelete: Cascade)
 }
 
 model SleepEntry {
   id String @id @default(uuid())
 
-  userId String
+  checkinId String @unique
 
   sleptAt DateTime
   wokeAt  DateTime
 
   hours Float
-
   quality Int?
-
   notes String?
 
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
-
-  @@index([userId, createdAt])
+  checkin Checkin @relation(fields: [checkinId], references: [id], onDelete: Cascade)
 }
 
 model Medication {
@@ -99,21 +110,29 @@ model MedicationSchedule {
 model MedicationLog {
   id String @id @default(uuid())
 
+  checkinId String
   medicationId String
 
   takenAt DateTime @default(now())
 
+  checkin Checkin @relation(fields: [checkinId], references: [id], onDelete: Cascade)
   medication Medication @relation(fields: [medicationId], references: [id])
+
+  @@unique([checkinId, medicationId])
 }
 
 model RoutineLog {
   id String @id @default(uuid())
 
+  checkinId String
   routineId String
 
   completedAt DateTime @default(now())
 
+  checkin Checkin @relation(fields: [checkinId], references: [id], onDelete: Cascade)
   routine RoutineItem @relation(fields: [routineId], references: [id])
+
+  @@unique([checkinId, routineId])
 }
 
 model RoutineItem {
