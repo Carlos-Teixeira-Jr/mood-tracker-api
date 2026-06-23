@@ -1,99 +1,332 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+```md
+# Mood Tracker API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend da aplicação Mood Tracker, responsável pelo gerenciamento de usuários, autenticação, check-ins diários, humor, sono, medicações, rotinas e métricas para dashboard.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tecnologias
 
-## Description
+- NestJS
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+- JWT Authentication
+- bcrypt
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Funcionalidades
 
-## Project setup
+### Autenticação
 
-```bash
-$ npm install
+- Registro de usuários
+- Login com JWT
+- Rotas protegidas por Guard
+- Controle de sessão baseado em token
+
+### Check-ins
+
+Cada check-in diário pode conter:
+
+- Registro de humor
+- Registro de sono
+- Medicações tomadas
+- Rotinas concluídas
+
+A API utiliza `upsert` para permitir atualização de um check-in existente para a mesma data.
+
+### Humor
+
+Campos disponíveis:
+
+- score
+- anxiety
+- energy
+- irritability
+- notes
+
+### Sono
+
+Campos disponíveis:
+
+- hours
+- quality
+- notes
+
+### Medicações
+
+- Cadastro de medicações
+- Ativação e desativação
+- Registro de tomada diária
+- Histórico vinculado ao check-in
+
+### Rotinas
+
+- Cadastro de rotinas
+- Ativação e desativação
+- Registro de conclusão diária
+- Histórico vinculado ao check-in
+
+### Dashboard
+
+Métricas agregadas por período:
+
+- day
+- week
+- month
+- all
+
+Inclui:
+
+- Média de humor
+- Média de horas de sono
+- Taxa de adesão às medicações
+- Taxa de conclusão de rotinas
+- Dados históricos para gráficos
+
+---
+
+## Estrutura do Projeto
 ```
 
-## Compile and run the project
+src
+│
+├── auth
+├── checkin
+├── dashboard
+├── medication
+├── routine
+├── prisma
+│
+├── app.module.ts
+└── main.ts
+
+````
+
+---
+
+## Instalação
 
 ```bash
-# development
-$ npm run start
+npm install
+````
 
-# watch mode
-$ npm run start:dev
+## Variáveis de Ambiente
 
-# production mode
-$ npm run start:prod
+Crie um arquivo `.env`:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5433/moodtracker"
+
+JWT_SECRET="your-secret-key"
+JWT_EXPIRES_IN="7d"
 ```
 
-## Run tests
+---
+
+## Execução
+
+### Desenvolvimento
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start:dev
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Produção
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run build
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## Banco de Dados
 
-Check out a few resources that may come in handy when working with NestJS:
+Gerar cliente Prisma:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npx prisma generate
+```
 
-## Support
+Criar migration:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npx prisma migrate dev --name migration_name
+```
 
-## Stay in touch
+Aplicar migrations:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+npx prisma migrate deploy
+```
 
-## License
+Abrir Prisma Studio:
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# mood-tracker-api
+```bash
+npx prisma studio
+```
+
+---
+
+## Principais Endpoints
+
+### Auth
+
+#### Registrar usuário
+
+```http
+POST /auth/register
+```
+
+#### Login
+
+```http
+POST /auth/login
+```
+
+---
+
+### Check-in
+
+#### Criar ou atualizar check-in
+
+```http
+POST /checkin
+```
+
+Exemplo:
+
+```json
+{
+  "date": "2026-06-23",
+  "mood": {
+    "score": 8,
+    "anxiety": 3,
+    "energy": 7,
+    "irritability": 2,
+    "notes": "Dia produtivo"
+  },
+  "sleep": {
+    "hours": 7.5,
+    "quality": 8,
+    "notes": "Dormi bem"
+  },
+  "medications": [],
+  "routines": []
+}
+```
+
+---
+
+### Medications
+
+#### Listar medicações
+
+```http
+GET /medication
+```
+
+#### Criar medicação
+
+```http
+POST /medication
+```
+
+---
+
+### Routines
+
+#### Listar rotinas
+
+```http
+GET /routine
+```
+
+#### Criar rotina
+
+```http
+POST /routine
+```
+
+---
+
+### Dashboard
+
+#### Obter métricas
+
+```http
+GET /dashboard?period=week
+```
+
+Parâmetros disponíveis:
+
+```text
+day
+week
+month
+all
+```
+
+---
+
+## Estrutura de Resposta do Dashboard
+
+```json
+{
+  "today": {},
+  "summary": {},
+  "charts": {
+    "moodLast7Days": [],
+    "sleepLast7Days": []
+  }
+}
+```
+
+---
+
+## Modelo de Dados
+
+```
+
+User
+│
+├── Checkins
+│ ├── MoodEntry
+│ ├── SleepEntry
+│ ├── MedicationLogs
+│ └── RoutineLogs
+│
+├── Medications
+└── RoutineItems
+
+```
+
+---
+
+## Testes
+
+Executar testes unitários:
+
+```bash
+npm run test
+```
+
+Executar testes e2e:
+
+```bash
+npm run test:e2e
+```
+
+Gerar relatório de cobertura:
+
+```bash
+npm run test:cov
+```
+
+---
+
+## Licença
+
+MIT
+
+```
+
+```
