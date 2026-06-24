@@ -1,17 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
+import express, { json, urlencoded } from 'express';
 import { AppModule } from '../src/app.module';
 
 const expressServer = express();
 
-let cachedHandler: any;
+expressServer.use(json());
+expressServer.use(urlencoded({ extended: true }));
+
+let cachedServer: any;
 
 async function bootstrap() {
-  if (!cachedHandler) {
+  if (!cachedServer) {
     const app = await NestFactory.create(
       AppModule,
       new ExpressAdapter(expressServer),
+      {
+        bodyParser: false,
+      },
     );
 
     app.enableCors({
@@ -21,10 +27,10 @@ async function bootstrap() {
 
     await app.init();
 
-    cachedHandler = expressServer;
+    cachedServer = expressServer;
   }
 
-  return cachedHandler;
+  return cachedServer;
 }
 
 export default async function handler(req: any, res: any) {
